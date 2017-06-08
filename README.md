@@ -10,7 +10,7 @@ This plugin requires [`dotbot`](https://github.com/anishathalye/dotbot/) to be i
 
 ## How does it work
 
-There's such a cool thing as [`homebrew-bundle`](https://github.com/Homebrew/homebrew-bundle), which allows to dump and install all your `brew` dependencies with ease. Why not such a tool?
+There's such a cool thing as [`homebrew-bundle`](https://github.com/Homebrew/homebrew-bundle), which allows to dump and install all your `brew` dependencies with ease. Why not use such a tool?
 
 There are two main commands to be aware of:
 
