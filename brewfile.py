@@ -80,7 +80,7 @@ class Brew(dotbot.Plugin):
         options = [command]
 
         for key, value in data.items():
-            if key not in ('stdout', 'stderr'):
+            if key not in ('stdout', 'stderr', 'include'):
                 options.append(build_option(key, value))
 
         return ' '.join(options)
@@ -100,7 +100,7 @@ class Brew(dotbot.Plugin):
 
     def _build_environs(self, data):
         includes = self._get_includes(data)
-        environs = {}
+        ignores = {}
 
         with open(self._brewfile_path(data)) as f:
             contense = f.read()
@@ -110,10 +110,14 @@ class Brew(dotbot.Plugin):
 
             if type_ not in includes:
                 env_name = 'HOMEBREW_BUNDLE_{}_SKIP'.format(type_.upper())
-                skips = environs.setdefault(env_name, [])
+                skips = ignores.setdefault(env_name, [])
                 skips.append(id_ or name)  # prefer id when available
 
-        environs = {k: ' '.join(v) for k, v in environs.items()}
+
+        ignores = {k: ' '.join(v) for k, v in ignores.items()}
+
+        environs = dict(os.environ)
+        environs.update(ignores)
 
         return environs
 
