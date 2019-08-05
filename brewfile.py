@@ -96,7 +96,7 @@ class Brew(dotbot.Plugin):
         if unknown:
             raise ValueError('Unknown include(s) provided', unknown)
 
-        return includes
+        return set(includes)
 
     def _build_environs(self, data):
         includes = self._get_includes(data)
