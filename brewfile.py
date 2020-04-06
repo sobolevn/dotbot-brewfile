@@ -75,7 +75,12 @@ class Brew(dotbot.Plugin):
 
     def _build_command(self, command, data):
         def build_option(name, value):
-            return '='.join(['--' + name, str(value)])
+            option = '--' + name
+
+            if name != 'file':
+                return option
+
+            return f'{option}={value}'
 
         options = [command]
 
