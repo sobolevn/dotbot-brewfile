@@ -80,7 +80,7 @@ class Brew(dotbot.Plugin):
             if name != 'file':
                 return option
 
-            return f'{option}={value}'
+            return '%s=%s' % (option, value)
 
         options = [command]
 
