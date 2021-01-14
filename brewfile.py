@@ -5,7 +5,7 @@ import subprocess
 import dotbot
 
 
-INCLUDE_OPTIONS = ['tap', 'brew', 'cask', 'mas']
+INCLUDE_OPTIONS = frozenset(('tap', 'brew', 'cask', 'mas'))
 BREWFILE_LINE = re.compile(
     r"""
     ^
@@ -14,14 +14,14 @@ BREWFILE_LINE = re.compile(
         (,\s*id:\s*(?P<id>\d\d*)\s*)?     # id for mas items
     $
     """,
-    re.MULTILINE | re.VERBOSE
+    re.MULTILINE | re.VERBOSE,
 )
 
 
 class Brew(dotbot.Plugin):
-    _supported_directives = [
+    _supported_directives = frozenset((
         'brewfile',
-    ]
+    ))
 
     _tap_command = 'brew tap homebrew/bundle'
     _install_command = 'brew bundle'
@@ -46,10 +46,11 @@ class Brew(dotbot.Plugin):
 
             self._handle_tap(data)
             self._handle_install(data)
-            return True
         except ValueError as e:
             self._log.error(e)
             return False
+        else:
+            return True
 
     # Utility
 
@@ -76,56 +77,49 @@ class Brew(dotbot.Plugin):
     def _build_command(self, command, data):
         def build_option(name, value):
             option = '--' + name
-
             if name != 'file':
                 return option
-
             return '%s=%s' % (option, value)
 
         options = [command]
 
         for key, value in data.items():
-            if key not in ('stdout', 'stderr', 'include'):
+            if key not in {'stdout', 'stderr', 'include'}:
                 options.append(build_option(key, value))
-
         return ' '.join(options)
 
     def _get_includes(self, data):
         includes = data.get('include', self._default_include)
-
         if isinstance(includes, str):
-            includes = [includes]
+            includes = frozenset((includes,))
 
-        unknown = set(includes) - set(INCLUDE_OPTIONS)
-
+        unknown = includes - INCLUDE_OPTIONS
         if unknown:
-            raise ValueError('Unknown include(s) provided', unknown)
-
-        return set(includes)
+            raise ValueError('Unknown include(s) provided:', unknown)
+        return includes
 
     def _build_environs(self, data):
         includes = self._get_includes(data)
         ignores = {}
 
         with open(self._brewfile_path(data)) as f:
-            contense = f.read()
+            contents = f.read()
 
-        for match in BREWFILE_LINE.finditer(contense):
+        for match in BREWFILE_LINE.finditer(contents):
             type_, name, id_ = match.group('type', 'name', 'id')
 
             if type_ not in includes:
-                env_name = 'HOMEBREW_BUNDLE_{}_SKIP'.format(type_.upper())
+                env_name = 'HOMEBREW_BUNDLE_{0}_SKIP'.format(type_.upper())
                 skips = ignores.setdefault(env_name, [])
                 skips.append(id_ or name)  # prefer id when available
 
-
-        ignores = {k: ' '.join(v) for k, v in ignores.items()}
-
+        ignores = {
+            env: ' '.join(deps)
+            for env, deps in ignores.items()
+        }
         environs = dict(os.environ)
         environs.update(ignores)
-
         return environs
-
 
     # Handlers
 
