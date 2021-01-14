@@ -139,6 +139,7 @@ class Brew(dotbot.Plugin):
                 stdout=True if stdout else devnull,
                 stderr=True if stderr else devnull,
                 cwd=self.cwd,
+                executable=os.environ.get('SHELL'),
             )
 
             if result != 0:
@@ -156,8 +157,9 @@ class Brew(dotbot.Plugin):
                 stdin=devnull,
                 stdout=True if stdout else devnull,
                 stderr=True if stderr else devnull,
-                env=environs,
                 cwd=self.cwd,
+                executable=os.environ.get('SHELL'),
+                env=environs,
             )
 
             if result != 0:
