@@ -41,6 +41,10 @@ class Brew(dotbot.Plugin):
         data = self._maybe_convert_to_dict(data)
 
         try:
+            test = data.get('if', None)
+            if test is not None and not self._test_success(test):
+                self._log.lowinfo('Skipping %s' % self._brewfile_path(data))
+                return True
             if not self._does_brewfile_exist(data):
                 raise ValueError('Bundle file does not exist.')
 
@@ -66,8 +70,13 @@ class Brew(dotbot.Plugin):
         return data
 
     def _brewfile_path(self, data):
+        file = data.get('file', self._default_filename)
+        if file[0] == '~':
+            return os.path.expanduser(file)
+        if file[0] == '/':
+            return file
         return os.path.join(
-            self.cwd, data.get('file', self._default_filename)
+            self.cwd, file
         )
 
     def _does_brewfile_exist(self, data):
@@ -84,14 +93,19 @@ class Brew(dotbot.Plugin):
         options = [command]
 
         for key, value in data.items():
-            if key not in {'stdout', 'stderr', 'include'}:
+            if key not in {'stdout', 'stderr', 'include', 'if'}:
                 options.append(build_option(key, value))
+                self._log.debug('Adding option: %s' % build_option(key, value))
         return ' '.join(options)
 
     def _get_includes(self, data):
         includes = data.get('include', self._default_include)
         if isinstance(includes, str):
             includes = frozenset((includes,))
+        elif isinstance(includes, list):
+            includes = frozenset((includes))
+
+        self._log.debug('Detected include(s): %s' % includes)
 
         unknown = includes - INCLUDE_OPTIONS
         if unknown:
@@ -117,6 +131,7 @@ class Brew(dotbot.Plugin):
             env: ' '.join(deps)
             for env, deps in ignores.items()
         }
+        self._log.debug('Adding environmental variables %s' % ignores)
         environs = dict(os.environ)
         environs.update(ignores)
         return environs
@@ -150,6 +165,8 @@ class Brew(dotbot.Plugin):
         full_command = self._build_command(self._install_command, data)
         stdout, stderr = self._get_options(data)
 
+        self._log.debug('Full brewfile command: %s' % full_command)
+
         with open(os.devnull, 'w') as devnull:
             result = subprocess.call(
                 full_command,
@@ -164,3 +181,9 @@ class Brew(dotbot.Plugin):
 
             if result != 0:
                 raise ValueError('Failed to install a bundle.')
+
+    def _test_success(self, command):
+        ret = dotbot.util.shell_command(command, cwd=self.cwd)
+        if ret != 0:
+            self._log.debug('Test \'%s\' returned false' % command)
+        return ret == 0

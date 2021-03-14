@@ -5,3 +5,5 @@
     no-upgrade: true
     # Will install only `taps` and `brews`, skipping `cask` and `mas`:
     include: ['tap', 'brew']
+    # Execute this in your $SHELL and only run brewfile if it is successful.
+    if: '[ `uname` = Darwin ]'
