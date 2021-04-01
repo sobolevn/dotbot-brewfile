@@ -92,6 +92,8 @@ class Brew(dotbot.Plugin):
         includes = data.get('include', self._default_include)
         if isinstance(includes, str):
             includes = frozenset((includes,))
+        elif isinstance(includes, list):
+            includes = frozenset(includes)
 
         unknown = includes - INCLUDE_OPTIONS
         if unknown:
