@@ -17,18 +17,18 @@ There are two main commands to be aware of:
 1. `brew bundle dump` - creates a `Brewfile` with all your dependencies, casks, taps and even services
 2. `brew bundle` - tries to read a `Brewfile` and install everything from it
 
-Looks pretty much the same as a well-known `bundler`. 
+Looks pretty much the same as a well-known `bundler`.
 
 
 ## Installation
 
-1. Run: 
+1. Run:
 
 ```bash
 git submodule add https://github.com/sobolevn/dotbot-brewfile.git
 ```
 
-2. Modify your `./install` with new plugin directory: 
+2. Modify your `./install` with new plugin directory:
 
 ```bash
 "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" --plugin-dir dotbot-brewfile -c "${CONFIG}" "${@}"
@@ -37,6 +37,12 @@ git submodule add https://github.com/sobolevn/dotbot-brewfile.git
 3. Add required options to your [`install.conf.yaml`](/example.yaml):
 
 ```yaml
+- defaults:
+    brewfile:
+      stdout: false
+      stderr: false
+      include: ['tap', 'brew', 'cask', 'mas']
+
 - brewfile:
     # This accepts the same options as `brew bundle` command:
     file: Brewfile
@@ -50,6 +56,6 @@ That's it!
 If you need just some basic yet useful `brew` setup, check out [`dotbot-brew`](https://github.com/d12frosted/dotbot-brew).
 
 
-## License 
+## License
 
 MIT. See [LICENSE](/LICENSE) for more details.
