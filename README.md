@@ -37,6 +37,7 @@ git submodule add https://github.com/sobolevn/dotbot-brewfile.git
 3. Add required options to your [`install.conf.yaml`](/example.yaml):
 
 ```yaml
+# This apply to all commands that come after setting the defaults.
 - defaults:
     brewfile:
       stdout: false
