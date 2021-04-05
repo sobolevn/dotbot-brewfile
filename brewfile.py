@@ -126,8 +126,13 @@ class Brew(dotbot.Plugin):
     # Handlers
 
     def _get_options(self, data):
-        stdout = data.get('stdout', self._default_stdout)
-        stderr = data.get('stderr', self._default_stderr)
+        defaults = self._context.defaults().get('brewfile', {})
+        stdout_default = defaults.get('stdout', self._default_stdout)
+        stderr_default = defaults.get('stderr', self._default_stderr)
+
+        stdout = data.get('stdout', stdout_default)
+        stderr = data.get('stderr', stderr_default)
+
         return stdout, stderr
 
     def _handle_tap(self, data):
