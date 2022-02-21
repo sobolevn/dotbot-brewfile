@@ -43,6 +43,8 @@ git submodule add https://github.com/sobolevn/dotbot-brewfile.git
       stdout: false
       stderr: false
       include: ['tap', 'brew', 'cask', 'mas']
+      # Optional, if you want to run install command as another user:
+      sudo: brewuser
 
 - brewfile:
     # This accepts the same options as `brew bundle` command:

@@ -8,3 +8,5 @@
     # Will print all output from brew
     stdout: true
     stderr: true
+    # Will run brew commands as another user
+    sudo: brewuser

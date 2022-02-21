@@ -81,10 +81,13 @@ class Brew(dotbot.Plugin):
                 return option
             return '%s=%s' % (option, value)
 
+        sudo_user = data.get('sudo')
+        if sudo_user:
+            command = f'sudo -Hu {sudo_user} {command}'
         options = [command]
 
         for key, value in data.items():
-            if key not in {'stdout', 'stderr', 'include'}:
+            if key not in {'stdout', 'stderr', 'include', 'sudo'}:
                 options.append(build_option(key, value))
         return ' '.join(options)
 
