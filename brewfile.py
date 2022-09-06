@@ -83,7 +83,7 @@ class Brew(dotbot.Plugin):
 
         sudo_user = data.get('sudo')
         if sudo_user:
-            command = f'sudo -Hu {sudo_user} {command}'
+            command = 'sudo -Hu {0} {1}'.format(sudo_user, command)
         options = [command]
 
         for key, value in data.items():
