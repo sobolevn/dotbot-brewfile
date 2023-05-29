@@ -9,9 +9,9 @@ INCLUDE_OPTIONS = frozenset(('tap', 'brew', 'cask', 'mas', 'vscode'))
 BREWFILE_LINE = re.compile(
     r"""
     ^
-        (?P<type>(tap|brew|cask|mas))\s*  # dependency type
-        "(?P<name>.*)"\s*                 # name between quotes
-        (,\s*id:\s*(?P<id>\d\d*)\s*)?     # id for mas items
+        (?P<type>(tap|brew|cask|mas|vscode))\s*  # dependency type
+        "(?P<name>.*)"\s*                        # name between quotes
+        (,\s*id:\s*(?P<id>\d\d*)\s*)?            # id for mas items
     $
     """,
     re.MULTILINE | re.VERBOSE,
