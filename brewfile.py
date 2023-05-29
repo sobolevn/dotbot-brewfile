@@ -5,7 +5,7 @@ import subprocess
 import dotbot
 
 
-INCLUDE_OPTIONS = frozenset(('tap', 'brew', 'cask', 'mas'))
+INCLUDE_OPTIONS = frozenset(('tap', 'brew', 'cask', 'mas', 'vscode'))
 BREWFILE_LINE = re.compile(
     r"""
     ^
